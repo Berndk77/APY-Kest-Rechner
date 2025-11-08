@@ -1,0 +1,9 @@
+{
+  "name": "APY & KESt Rechner",
+  "short_name": "APY Rechner",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b6efd",
+  "theme_color": "#0b6efd",
+  "icons": []
+}
