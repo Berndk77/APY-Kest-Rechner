@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b6efd">
+  <title>APY & KESt Rechner</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root{
+      --bg:#0b6efd;
+      --bg-2:#f7f9fc;
+      --text:#0f172a;
+      --muted:#475569;
+      --card:#ffffff;
+      --border:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    html{overflow-x:hidden}
+    body{
+      margin:0;
+      overflow-x:hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background:linear-gradient(180deg, var(--bg) 0 164px, var(--bg-2) 164px 100%);
+    }
+    .page{
+      padding-top: calc(env(safe-area-inset-top) + 10px);
+      padding-bottom: calc(env(safe-area-inset-bottom) + 14px);
+      padding-left: calc(env(safe-area-inset-left) + 14px);
+      padding-right: calc(env(safe-area-inset-right) + 14px);
+    }
+    header{
+      color:#fff; text-align:center;
+      padding:22px 8px 16px;
+    }
+    header h1{
+      margin:0 0 6px;
+      font-size: clamp(18px, 4.3vw, 26px);
+      font-weight:800; line-height:1.15;
+    }
+    header p{margin:0;opacity:.96;font-size:14px}
+    main{ max-width:920px; margin: 12px auto 28px; }
+    .card{
+      background:var(--card);
+      border-radius:14px;
+      box-shadow: 0 8px 26px rgba(2,6,23,.12);
+      border:1px solid var(--border);
+      overflow:hidden;
+    }
+    .grid{ display:grid; grid-template-columns:1fr; }
+    @media (min-width: 920px){
+      .grid{ grid-template-columns: 1.05fr .95fr; }
+      .side{ border-left:1px solid var(--border); }
+    }
+    .section{ padding:16px }
+    .section h2{ margin:0 0 10px; font-size: 17px; }
+    .row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:10px 0; }
+    .row label{ font-size:14px; color:var(--muted); flex:1 0 180px }
+    .row input, .row select{
+      flex:1 1 220px; min-width:0;
+      min-height:44px; padding:10px 12px;
+      border:1px solid var(--border); border-radius:12px;
+      font-size:16px; background:#fff; outline:none;
+      -webkit-appearance:none; appearance:none;
+    }
+    .row input:focus, .row select:focus{ border-color:#93c5fd; box-shadow:0 0 0 4px rgba(147,197,253,.35) }
+    .hint{ font-size:12px; color:var(--muted); margin-top:6px }
+    .btn{
+      border:0; border-radius:12px; padding:12px 16px;
+      background:#0b6efd; color:#fff; font-weight:700; cursor:pointer;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .btn.ghost{ background:#fff; color:#111827; border:1px solid var(--border) }
+    .top-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px }
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      border:1px solid var(--border); border-radius:999px;
+      padding:6px 10px; font-size:12px; color:#1f2937; background:#fff;
+    }
+    .sep{ height:1px; background:var(--border); margin:12px 0 }
+    .results{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    @media (max-width: 500px){ .results{ grid-template-columns:1fr; } }
+    .kpi{ padding:12px; border:1px solid var(--border); border-radius:12px; background:#fff }
+    .kpi .label{ font-size:12px; color:var(--muted) }
+    .kpi .value{ font-size:20px; font-weight:800; margin-top:2px; line-height:1.2; }
+    .kpi .sub{ font-size:12px; color:var(--muted); margin-top:2px }
+    .rows{ margin-top:8px; border-top:1px dashed var(--border); padding-top:8px }
+    .milestones{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px }
+    .milestones .kpi .value{ font-size:16px }
+    .table-wrap{
+      border:1px solid var(--border); border-radius:12px;
+      overflow:auto; -webkit-overflow-scrolling:touch; max-height:320px;
+      background:#fff;
+    }
+    table{ width:100%; border-collapse:collapse; font-size:14px; min-width:520px }
+    th, td{ padding:10px; border-bottom:1px solid var(--border); text-align:right; white-space:nowrap }
+    th:first-child, td:first-child{ text-align:left }
+    tr:nth-child(even){ background:#fafafa }
+    footer{ padding:16px; text-align:center; color:#334155; font-size:12px }
+
+    /* Native, large checkbox for KESt */
+    .kest-wrap{ display:flex; align-items:center; gap:12px; flex-wrap:wrap }
+    .kest-wrap input[type="checkbox"]{
+      width:28px; height:28px;
+      -webkit-appearance:auto; appearance:auto;
+      accent-color:#0b6efd;
+      flex:0 0 auto;
+    }
+    .mini{ width:120px }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>APY & KESt Rechner (Web-App)</h1>
+      <p>Täglicher Zinseszins • Netto optional mit KESt • CSV-Export • Offline nutzbar</p>
+    </header>
+
+    <main>
+      <div class="card grid">
+        <div class="section">
+          <h2>Eingaben</h2>
+
+          <div class="row">
+            <label for="principal">Startkapital (€)</label>
+            <input id="principal" inputmode="decimal" value="10000" autocomplete="off">
+          </div>
+
+          <div class="row">
+            <label for="apy">APY (% p.a.)</label>
+            <input id="apy" inputmode="decimal" value="15" autocomplete="off">
+          </div>
+
+          <div class="row">
+            <label for="years">Laufzeit (Jahre)</label>
+            <select id="years">
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
+          <div class="row" style="justify-content:space-between">
+            <div class="kest-wrap">
+              <input type="checkbox" id="withTax" checked>
+              <label for="withTax" style="margin:0">KESt berücksichtigen</label>
+            </div>
+            <div class="row" style="margin:0;flex:0 0 auto">
+              <label for="kest" style="flex:0 0 auto">KESt (%)</label>
+              <input id="kest" class="mini" inputmode="decimal" value="27.5" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="hint">Tageszins wird aus APY berechnet: r<sub>Tag</sub> = (1 + APY)<sup>1/365</sup> − 1</div>
+
+          <div class="top-actions">
+            <button class="btn" id="calcBtn">Berechnen</button>
+            <button class="btn ghost" id="csvBtn">CSV (365 Tage)</button>
+            <span class="badge" id="dailyRateBadge">Tageszins: —</span>
+          </div>
+
+          <div class="sep"></div>
+
+          <h2>Ergebnis</h2>
+          <div class="results">
+            <div class="kpi">
+              <div class="label">Endbetrag (brutto)</div>
+              <div class="value" id="grossEnd">—</div>
+              <div class="sub" id="grossInt">Zinsen brutto: —</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Endbetrag (netto)</div>
+              <div class="value" id="netEnd">—</div>
+              <div class="sub" id="netInt">Zinsen netto: —</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Abzug KESt</div>
+              <div class="value" id="tax">—</div>
+              <div class="sub">am Periodenende</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Effektiver Nettozins p.a.</div>
+              <div class="value" id="effNet">—</div>
+              <div class="sub">nach Steuer</div>
+            </div>
+          </div>
+
+          <div class="rows">
+            <h2>Meilensteine (netto, ca.)</h2>
+            <div class="milestones">
+              <div class="kpi">
+                <div class="label">Tag 30</div>
+                <div class="value" id="m30">—</div>
+              </div>
+              <div class="kpi">
+                <div class="label">Tag 90</div>
+                <div class="value" id="m90">—</div>
+              </div>
+              <div class="kpi">
+                <div class="label">Tag 180</div>
+                <div class="value" id="m180">—</div>
+              </div>
+              <div class="kpi">
+                <div class="label">Tag 270</div>
+                <div class="value" id="m270">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section side">
+          <h2>365-Tage-Tabelle (brutto & netto)</h2>
+          <div class="table-wrap">
+            <table id="table">
+              <thead>
+                <tr>
+                  <th>Tag</th>
+                  <th>Kontostand (brutto)</th>
+                  <th>Zinsen kum. (brutto)</th>
+                  <th>Schätzung netto*</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="hint">* Netto-Schätzung geht davon aus, dass KESt am Periodenende fällig wird.</div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div>Made for Bernd • PWA mit Safe-Area • APY → täglicher Zinseszins</div>
+    </footer>
+  </div>
+
+  <script>
+    // Helpers
+    const nfEUR = new Intl.NumberFormat('de-AT', { style:'currency', currency:'EUR', maximumFractionDigits:2 });
+    const nfPct = new Intl.NumberFormat('de-AT', { style:'percent', maximumFractionDigits:5 });
+    const el = id => document.getElementById(id);
+
+    function parseNum(x){
+      if (typeof x !== 'string') return 0;
+      x = x.replace(/\./g,'').replace(',', '.').trim();
+      const v = Number(x);
+      return Number.isFinite(v) ? v : 0;
+    }
+
+    function calc(){
+      const P = parseNum(el('principal').value);
+      const apyPct = parseNum(el('apy').value);
+      const years = Number(el('years').value);
+      const withTax = el('withTax').checked;
+      const kestPct = parseNum(el('kest').value);
+
+      const apy = apyPct / 100;
+      const kest = kestPct / 100;
+
+      // daily rate from APY
+      const rDaily = Math.pow(1 + apy, 1/365) - 1;
+      el('dailyRateBadge').textContent = `Tageszins: ${nfPct.format(rDaily)}`;
+
+      // Endwert brutto (APY inkl. Zinseszins)
+      const grossEnd = P * Math.pow(1 + apy, years);
+      const grossInt = Math.max(0, grossEnd - P);
+      const tax = withTax ? grossInt * kest : 0;
+      const netInt = grossInt - tax;
+      const netEnd = P + netInt;
+
+      el('grossEnd').textContent = nfEUR.format(grossEnd);
+      el('grossInt').textContent = `Zinsen brutto: ${nfEUR.format(grossInt)}`;
+      el('tax').textContent = withTax ? nfEUR.format(tax) : '—';
+      el('netInt').textContent = withTax ? `Zinsen netto: ${nfEUR.format(netInt)}` : 'Zinsen netto: —';
+      el('netEnd').textContent = withTax ? nfEUR.format(netEnd) : '—';
+
+      const effNetRate = withTax ? apy * (1 - kest) : null;
+      el('effNet').textContent = withTax ? new Intl.NumberFormat('de-AT', { style:'percent', maximumFractionDigits:3 }).format(effNetRate) : '—';
+
+      // Table (daily, 365 Tage Vorschau)
+      const tbody = document.querySelector('#table tbody');
+      tbody.innerHTML = '';
+      let balance = P;
+      for(let d=1; d<=365; d++){
+        balance = balance * (1 + rDaily);
+        const brutto = balance;
+        const bruttoInt = brutto - P;
+        const estNet = withTax ? P + bruttoInt * (1 - kest) : brutto;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${d}</td>
+                        <td>${nfEUR.format(brutto)}</td>
+                        <td>${nfEUR.format(bruttoInt)}</td>
+                        <td>${nfEUR.format(estNet)}</td>`;
+        tbody.appendChild(tr);
+      }
+
+      // Milestones (net estimate)
+      const getEstNet = (d)=>{
+        let b = P * Math.pow(1 + rDaily, d);
+        let gi = b - P;
+        return withTax ? P + gi * (1 - kest) : b;
+      };
+      el('m30').textContent = nfEUR.format(getEstNet(30));
+      el('m90').textContent = nfEUR.format(getEstNet(90));
+      el('m180').textContent = nfEUR.format(getEstNet(180));
+      el('m270').textContent = nfEUR.format(getEstNet(270));
+    }
+
+    function exportCSV(){
+      const P = parseNum(el('principal').value);
+      const apyPct = parseNum(el('apy').value);
+      const withTax = el('withTax').checked;
+      const kestPct = parseNum(el('kest').value);
+      const apy = apyPct / 100;
+      const kest = kestPct / 100;
+      const rDaily = Math.pow(1 + apy, 1/365) - 1;
+
+      let csv = 'Tag;Kontostand (brutto);Zinsen kum. (brutto);Schätzung netto\\n';
+      let balance = P;
+      for(let d=1; d<=365; d++){
+        balance = balance * (1 + rDaily);
+        const brutto = balance;
+        const bruttoInt = brutto - P;
+        const estNet = withTax ? P + bruttoInt * (1 - kest) : brutto;
+        csv += `${d};${brutto.toFixed(2).replace('.',',')};${bruttoInt.toFixed(2).replace('.',',')};${estNet.toFixed(2).replace('.',',')}\\n`;
+      }
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'apy_kest_365_tage.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Event wiring (no custom toggle JS needed)
+    document.getElementById('calcBtn').addEventListener('click', calc);
+    document.getElementById('csvBtn').addEventListener('click', exportCSV);
+    document.getElementById('withTax').addEventListener('change', calc);
+    document.getElementById('kest').addEventListener('input', ()=>{ if(el('withTax').checked) calc(); });
+
+    // Auto-calc on load
+    window.addEventListener('load', ()=>{
+      calc();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js');
+      }
+    });
+  </script>
+</body>
+</html>
