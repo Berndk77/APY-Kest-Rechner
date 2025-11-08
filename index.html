@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b6efd">
   <title>APY & KESt Rechner</title>
   <link rel="manifest" href="manifest.webmanifest">
@@ -11,116 +11,105 @@
       --bg:#0b6efd;
       --bg-2:#f7f9fc;
       --text:#0f172a;
-      --muted:#6b7280;
+      --muted:#475569;
       --card:#ffffff;
-      --ok:#0ea5e9;
-      --accent:#22c55e;
-      --danger:#ef4444;
       --border:#e5e7eb;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       color:var(--text);
-      background:linear-gradient(180deg, var(--bg) 0 180px, var(--bg-2) 180px 100%);
-      min-height:100vh;
+      background:linear-gradient(180deg, var(--bg) 0 160px, var(--bg-2) 160px 100%);
+      /* iOS safe areas */
+      padding-top: env(safe-area-inset-top);
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+      padding-bottom: env(safe-area-inset-bottom);
     }
     header{
-      padding:28px 16px 20px;
-      color:white;
+      padding:24px 12px 16px;
+      color:#fff;
       text-align:center;
     }
     header h1{
-      margin:0 0 6px;
-      font-size: clamp(20px, 4.5vw, 28px);
-      font-weight:700;
+      margin:0 0 4px;
+      font-size: clamp(18px, 4.2vw, 26px);
+      font-weight:800;
       letter-spacing:.2px;
+      line-height:1.15;
+      text-wrap:balance;
     }
-    header p{margin:0;opacity:.9}
+    header p{margin:0;opacity:.95;font-size:14px}
     main{
-      max-width:980px;margin:-60px auto 40px;padding:0 16px;
+      max-width:980px;
+      margin: 12px auto 28px;
+      padding: 0 4px;
     }
     .card{
       background:var(--card);
       border-radius:14px;
-      box-shadow: 0 10px 30px rgba(2,6,23,.15);
+      box-shadow: 0 8px 26px rgba(2,6,23,.12);
       border:1px solid var(--border);
       overflow:hidden;
     }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-    }
-    @media (min-width: 880px){
+    .grid{ display:grid; grid-template-columns: 1fr; }
+    @media (min-width: 920px){
       .grid{ grid-template-columns: 1.05fr .95fr; }
       .side{ border-left:1px solid var(--border); }
     }
-    .section{
-      padding:18px;
-    }
-    .section h2{
-      margin:0 0 12px;
-      font-size: 18px;
-    }
-    .row{
-      display:flex;gap:12px;align-items:center;margin:10px 0;
-    }
-    label{font-size:14px;color:var(--muted);}
+    .section{ padding:16px }
+    .section h2{ margin:0 0 10px; font-size: 17px; }
+    .row{ display:flex; gap:10px; align-items:center; margin:10px 0; }
+    label{ font-size:14px; color:var(--muted); }
     input, select{
-      flex:1;
-      padding:12px 12px;
-      border:1px solid var(--border);
-      border-radius:10px;
-      outline:none;
-      font-size:16px;
-      transition:border .15s ease, box-shadow .15s ease;
-      background:#fff;
+      flex:1; min-height:44px; padding:10px 12px;
+      border:1px solid var(--border); border-radius:12px;
+      font-size:16px; background:#fff; outline:none;
+      -webkit-appearance:none; appearance:none;
     }
     input:focus, select:focus{ border-color:#93c5fd; box-shadow:0 0 0 4px rgba(147,197,253,.35) }
-    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .hint{ font-size:12px; color:var(--muted); margin-top:6px }
     .btn{
-      appearance:none;border:0;border-radius:10px;padding:12px 16px;
-      background:var(--bg);color:#fff;font-weight:600;cursor:pointer;
-      display:inline-flex;gap:8px;align-items:center;
+      border:0; border-radius:12px; padding:12px 16px;
+      background:#0b6efd; color:#fff; font-weight:700; cursor:pointer;
+      display:inline-flex; gap:8px; align-items:center;
     }
-    .btn.secondary{background:#111827}
-    .btn.ghost{background:transparent;border:1px solid var(--border);color:#111827}
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-    .results{
-      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;
-    }
-    .kpi{
-      padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff;
-    }
-    .kpi .label{font-size:12px;color:var(--muted)}
-    .kpi .value{font-size:20px;font-weight:700;margin-top:2px}
-    .kpi .sub{font-size:12px;color:var(--muted);margin-top:2px}
-    .rows{margin-top:8px;border-top:1px dashed var(--border);padding-top:8px}
-    .milestones{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-    .milestones .kpi .value{font-size:16px}
-    footer{padding:18px;text-align:center;color:#334155;font-size:12px}
-    .switch{
-      display:inline-flex;align-items:center;gap:10px
-    }
-    .switch input{width:auto}
-    .top-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .btn.ghost{ background:#fff; color:#111827; border:1px solid var(--border) }
+    .btn:disabled{ opacity:.6; cursor:not-allowed }
+    .top-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px }
     .badge{
-      display:inline-flex;align-items:center;gap:6px;
-      border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-size:12px;color:#1f2937;background:#fff;
+      display:inline-flex; align-items:center; gap:6px;
+      border:1px solid var(--border); border-radius:999px;
+      padding:6px 10px; font-size:12px; color:#1f2937; background:#fff;
     }
-    .sep{height:1px;background:var(--border);margin:12px 0}
-    .table-wrap{max-height:260px;overflow:auto;border:1px solid var(--border);border-radius:10px}
-    table{width:100%;border-collapse:collapse;font-size:14px}
-    th, td{padding:10px;border-bottom:1px solid var(--border);text-align:right}
-    th:first-child, td:first-child{text-align:left}
-    tr:nth-child(even){background:#fafafa}
+    .sep{ height:1px; background:var(--border); margin:12px 0 }
+    .results{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    @media (max-width: 420px){ .results{ grid-template-columns:1fr; } }
+    .kpi{ padding:12px; border:1px solid var(--border); border-radius:12px; background:#fff }
+    .kpi .label{ font-size:12px; color:var(--muted) }
+    .kpi .value{ font-size:20px; font-weight:800; margin-top:2px; line-height:1.2; word-break:break-word }
+    .kpi .sub{ font-size:12px; color:var(--muted); margin-top:2px }
+    .rows{ margin-top:8px; border-top:1px dashed var(--border); padding-top:8px }
+    .milestones{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px }
+    .milestones .kpi .value{ font-size:16px }
+    .table-wrap{
+      border:1px solid var(--border); border-radius:12px;
+      overflow:auto; -webkit-overflow-scrolling:touch; max-height:320px;
+      background:#fff;
+    }
+    table{ width:100%; border-collapse:collapse; font-size:14px; min-width:520px }
+    th, td{ padding:10px; border-bottom:1px solid var(--border); text-align:right; white-space:nowrap }
+    th:first-child, td:first-child{ text-align:left }
+    tr:nth-child(even){ background:#fafafa }
+    footer{ padding:16px; text-align:center; color:#334155; font-size:12px }
   </style>
 </head>
 <body>
   <header>
-    <h1>APY & KESt Rechner (Web-App)</h1>
-    <p>Täglicher Zinseszins aus APY • Netto optional mit KESt • CSV-Export • Offline nutzbar</p>
+    <h1>APY & KESt Rechner (Web‑App)</h1>
+    <p>Täglicher Zinseszins • Netto optional mit KESt • CSV‑Export • Offline nutzbar</p>
   </header>
 
   <main>
@@ -149,12 +138,12 @@
           </select>
         </div>
 
-        <div class="row" style="justify-content:space-between">
-          <div class="switch">
-            <input type="checkbox" id="withTax" checked>
-            <label for="withTax">KESt berücksichtigen</label>
+        <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="checkbox" id="withTax" checked style="width:auto">
+            <label for="withTax" style="margin:0">KESt berücksichtigen</label>
           </div>
-          <div class="row" style="margin:0">
+          <div class="row" style="margin:0;flex:0 0 auto">
             <label for="kest" style="min-width:110px">KESt (%)</label>
             <input id="kest" inputmode="decimal" value="27.5" autocomplete="off" style="width:120px">
           </div>
@@ -238,14 +227,13 @@
   </main>
 
   <footer>
-    <div>Made for Bernd • Läuft offline (zum Home-Bildschirm hinzufügen) • APY → täglicher Zinseszins</div>
+    <div>Made for Bernd • PWA mit Safe-Area • APY → täglicher Zinseszins</div>
   </footer>
 
   <script>
     // Helpers
     const nfEUR = new Intl.NumberFormat('de-AT', { style:'currency', currency:'EUR', maximumFractionDigits:2 });
     const nfPct = new Intl.NumberFormat('de-AT', { style:'percent', maximumFractionDigits:5 });
-
     const el = id => document.getElementById(id);
 
     function parseNum(x){
@@ -264,14 +252,12 @@
 
       const apy = apyPct / 100;
       const kest = kestPct / 100;
-      const days = Math.round(365 * years);
 
       // daily rate from APY
       const rDaily = Math.pow(1 + apy, 1/365) - 1;
-
       el('dailyRateBadge').textContent = `Tageszins: ${nfPct.format(rDaily)}`;
 
-      // Endwert brutto (APY bereits inkl. Zinseszins)
+      // Endwert brutto (APY inkl. Zinseszins, daher ^years)
       const grossEnd = P * Math.pow(1 + apy, years);
       const grossInt = Math.max(0, grossEnd - P);
       const tax = withTax ? grossInt * kest : 0;
@@ -287,15 +273,15 @@
       const effNetRate = withTax ? apy * (1 - kest) : null;
       el('effNet').textContent = withTax ? new Intl.NumberFormat('de-AT', { style:'percent', maximumFractionDigits:3 }).format(effNetRate) : '—';
 
-      // Table (daily)
+      // Table (daily, 365 Tage Vorschau)
       const tbody = document.querySelector('#table tbody');
       tbody.innerHTML = '';
       let balance = P;
-      for(let d=1; d<=Math.min(365, days); d++){
+      for(let d=1; d<=365; d++){
         balance = balance * (1 + rDaily);
         const brutto = balance;
         const bruttoInt = brutto - P;
-        const estNet = withTax ? P + bruttoInt * (1 - kest) : brutto; // proportionally applying tax at the end
+        const estNet = withTax ? P + bruttoInt * (1 - kest) : brutto; // Steuer erst am Periodenende angenähert
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${d}</td>
                         <td>${nfEUR.format(brutto)}</td>
@@ -319,10 +305,8 @@
     function exportCSV(){
       const P = parseNum(el('principal').value);
       const apyPct = parseNum(el('apy').value);
-      const years = Number(el('years').value);
       const withTax = el('withTax').checked;
       const kestPct = parseNum(el('kest').value);
-
       const apy = apyPct / 100;
       const kest = kestPct / 100;
       const rDaily = Math.pow(1 + apy, 1/365) - 1;
@@ -347,8 +331,8 @@
       URL.revokeObjectURL(url);
     }
 
-    el('calcBtn').addEventListener('click', calc);
-    el('csvBtn').addEventListener('click', exportCSV);
+    document.getElementById('calcBtn').addEventListener('click', calc);
+    document.getElementById('csvBtn').addEventListener('click', exportCSV);
 
     // Auto-calc on load
     window.addEventListener('load', ()=>{
