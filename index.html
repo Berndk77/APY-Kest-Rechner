@@ -14,6 +14,7 @@
       --muted:#475569;
       --card:#ffffff;
       --border:#e5e7eb;
+      --pad-inline: max(18px, env(safe-area-inset-left), env(safe-area-inset-right));
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -23,24 +24,34 @@
       overflow-x:hidden;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       color:var(--text);
-      background:linear-gradient(180deg, var(--bg) 0 164px, var(--bg-2) 164px 100%);
+      background:linear-gradient(180deg, var(--bg) 0 176px, var(--bg-2) 176px 100%);
     }
     .page{
       padding-top: calc(env(safe-area-inset-top) + 10px);
-      padding-bottom: calc(env(safe-area-inset-bottom) + 14px);
-      padding-left: calc(env(safe-area-inset-left) + 14px);
-      padding-right: calc(env(safe-area-inset-right) + 14px);
+      padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
+      padding-left: var(--pad-inline);
+      padding-right: var(--pad-inline);
+    }
+    .container{
+      max-width: 980px;
+      margin: 0 auto;
+      width: 100%;
     }
     header{
       color:#fff; text-align:center;
-      padding:22px 8px 16px;
+      padding:22px 0 16px;
+    }
+    header .title, header .subtitle{
+      padding-inline: min(20px, var(--pad-inline));
+      max-width: 100%;
     }
     header h1{
       margin:0 0 6px;
-      font-size: clamp(18px, 4.3vw, 26px);
-      font-weight:800; line-height:1.15;
+      font-size: clamp(17px, 4vw, 26px);
+      font-weight:800; line-height:1.18;
+      overflow-wrap:anywhere; word-break:normal;
     }
-    header p{margin:0;opacity:.96;font-size:14px}
+    header p{margin:0;opacity:.96;font-size:14px; line-height:1.35; overflow-wrap:anywhere}
     main{ max-width:920px; margin: 12px auto 28px; }
     .card{
       background:var(--card);
@@ -100,7 +111,7 @@
     tr:nth-child(even){ background:#fafafa }
     footer{ padding:16px; text-align:center; color:#334155; font-size:12px }
 
-    /* Native, large checkbox for KESt */
+    /* Native checkbox for KESt */
     .kest-wrap{ display:flex; align-items:center; gap:12px; flex-wrap:wrap }
     .kest-wrap input[type="checkbox"]{
       width:28px; height:28px;
@@ -113,12 +124,16 @@
 </head>
 <body>
   <div class="page">
-    <header>
-      <h1>APY & KESt Rechner (Web-App)</h1>
-      <p>Täglicher Zinseszins • Netto optional mit KESt • CSV-Export • Offline nutzbar</p>
+    <header class="container">
+      <div class="title">
+        <h1>APY & KESt Rechner (Web-App)</h1>
+      </div>
+      <div class="subtitle">
+        <p>Täglicher Zinseszins • Netto optional mit KESt • CSV-Export • Offline nutzbar</p>
+      </div>
     </header>
 
-    <main>
+    <main class="container">
       <div class="card grid">
         <div class="section">
           <h2>Eingaben</h2>
@@ -232,7 +247,7 @@
       </div>
     </main>
 
-    <footer>
+    <footer class="container">
       <div>Made for Bernd • PWA mit Safe-Area • APY → täglicher Zinseszins</div>
     </footer>
   </div>
@@ -338,7 +353,6 @@
       URL.revokeObjectURL(url);
     }
 
-    // Event wiring (no custom toggle JS needed)
     document.getElementById('calcBtn').addEventListener('click', calc);
     document.getElementById('csvBtn').addEventListener('click', exportCSV);
     document.getElementById('withTax').addEventListener('change', calc);
