@@ -1,6 +1,6 @@
 self.addEventListener('install', (e)=>{
   e.waitUntil(
-    caches.open('apy-cache-v2').then(cache => cache.addAll([
+    caches.open('apy-cache-v3').then(cache => cache.addAll([
       './index.html',
       './manifest.webmanifest'
     ]))
@@ -8,7 +8,7 @@ self.addEventListener('install', (e)=>{
 });
 self.addEventListener('activate', (e)=>{
   e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(k=>k!=='apy-cache-v2').map(k=>caches.delete(k))))
+    caches.keys().then(keys => Promise.all(keys.filter(k=>k!=='apy-cache-v3').map(k=>caches.delete(k))))
   );
 });
 self.addEventListener('fetch', (e)=>{
